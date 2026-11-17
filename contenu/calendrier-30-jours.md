@@ -9,7 +9,7 @@ Rythme cible : ~10 h/semaine.
 
 | Jour | Tâche | Livrable |
 |---|---|---|
-| J1 | Choisir nom + domaine (neutre, pas de « Noobiotik » dans le nom : marque déposée de l'annonceur) | Domaine réservé |
+| J1 | Réserver `probiodecode.fr` + `.com` (cf. `docs/nom-et-seo.md`) | Domaine réservé |
 | J1 | Créer les comptes TikTok + Instagram (pro/créateur) au nom du projet | Comptes + bio |
 | J2 | Monter le site (WordPress ou Astro/statique), thème sobre, rapide | Site en ligne |
 | J2 | Pages : À propos, Mentions légales, Politique d'affiliation, Contact | 4 pages |
@@ -56,4 +56,5 @@ Rythme cible : ~10 h/semaine.
 7. « Flore Intime Noobiotik : composition, souches, conseils d'usage » (fiche factuelle)
 8. « Flore Orale Noobiotik : composition et place dans une routine d'hygiène bucco-dentaire » (fiche factuelle)
 
+> Ordre et mots-clés définitifs des articles : voir `docs/nom-et-seo.md` §4 (prévaut sur les titres ci-dessus).
 > Volumes de recherche non vérifiés : avant de rédiger chaque article, valider le mot-clé principal (Semrush / Search Console) et ajuster le titre.
