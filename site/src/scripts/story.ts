@@ -9,10 +9,12 @@
  *                opacité 0 → 1) en entrant dans l'écran (scrub, court).
  *  2. strains  — les 9 points partent de l'orbite du hero (cercle) et se rangent
  *                en 3 familles 4 / 4 / 1 (scrub, desktop + mobile, sans pin).
+ *  ·  journey  — animation « Voyage de la gélule » (voir journey.ts).
  *  3. counter  — note Trustpilot comptée de 0 à 4,6 (une seule fois).
  */
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { initJourney } from './journey';
 
 export function initStory() {
   gsap.registerPlugin(ScrollTrigger);
@@ -20,6 +22,7 @@ export function initStory() {
 
   mm.add('(prefers-reduced-motion: no-preference)', () => {
     problem();
+    initJourney(gsap, ScrollTrigger);
     strains();
     counter();
   });

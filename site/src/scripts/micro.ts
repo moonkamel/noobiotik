@@ -5,7 +5,7 @@
  *  - Header : passe en verre dépoli après 24 px de défilement
  *  - Cartes [data-stagger] : apparition en cascade (ressort, stagger 70 ms)
  *  - Icônes .draw : tracé du trait à l'entrée dans l'écran
- *  - Barre CTA mobile : visible après le hero, masquée sur la section finale
+ *  - Barre CTA mobile : masquée sur le hero, la fin de l'animation et la section finale
  *  - Ensuite, à l'idle, chargement différé du récit GSAP (story.ts)
  */
 import { animate } from 'motion/mini';
@@ -53,16 +53,21 @@ document.querySelectorAll<SVGElement>('.draw').forEach((svg) => {
 
 /* Barre CTA mobile ---------------------------------------------------------- */
 const sticky = document.querySelector<HTMLElement>('[data-sticky-cta]');
-const hero = document.querySelector<HTMLElement>('.hero');
-const finalSection = document.querySelector<HTMLElement>('[data-action]');
-if (sticky && hero && finalSection) {
+// Zones où la barre est masquée : hero, fin de l'animation (son propre CTA) et section finale
+const hideZones = ['.hero', '[data-journey-end]', '[data-action]']
+  .map((s) => document.querySelector<HTMLElement>(s))
+  .filter((el): el is HTMLElement => Boolean(el));
+if (sticky && hideZones.length) {
   sticky.hidden = false;
-  let heroVisible = true;
-  let finalVisible = false;
-  const sync = () => sticky.classList.toggle('is-hidden', heroVisible || finalVisible);
+  const visible = new Set<Element>();
+  const sync = () => sticky.classList.toggle('is-hidden', visible.size > 0);
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => (e.isIntersecting ? visible.add(e.target) : visible.delete(e.target)));
+    sync();
+  }, { rootMargin: '0px 0px -15% 0px' });
+  hideZones.forEach((z) => io.observe(z));
+  visible.add(hideZones[0]); // masquée au chargement (on est dans le hero)
   sync();
-  new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; sync(); }).observe(hero);
-  new IntersectionObserver(([e]) => { finalVisible = e.isIntersecting; sync(); }, { rootMargin: '0px 0px -30% 0px' }).observe(finalSection);
 }
 
 /* Récit GSAP, chargé en différé ---------------------------------------------- */

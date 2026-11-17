@@ -1,0 +1,190 @@
+---
+/**
+ * Animation « Voyage de la gélule » — version SVG + GSAP (timeline : src/scripts/journey.ts).
+ *
+ * Le SVG est écrit dans son ÉTAT FINAL (dernière image) : c'est ce que voient les visiteurs
+ * sans JS ou avec prefers-reduced-motion. Quand l'animation est active, journey.ts ajoute
+ * la classe .is-animated et la timeline repart de la 1re image.
+ * Si LOTTIE_JSON_PATH est renseigné, ce SVG sert d'affiche pendant le chargement du Lottie.
+ */
+import Cta from './Cta.astro';
+import { journey, product, LOTTIE_JSON_PATH } from '../config';
+
+// ── Géométrie (viewBox 720 × 560) ─────────────────────────────
+const CAP = { x: 360, y: 440, w: 36, h: 80 }; // gélule : position finale (intestin)
+
+// Vagues acides : sinusoïde de longueur d'onde 60, élargie pour boucler par translation de −60
+const wave = (baseY: number, amp: number) => {
+  let d = `M100 ${baseY}`;
+  for (let x = 100; x < 700; x += 60) d += ` q15 ${-amp} 30 0 t30 0`;
+  return `${d} V340 H100 Z`;
+};
+const waves = [
+  { d: wave(222, 7), o: 0.35, dur: 3.6 },
+  { d: wave(238, 6), o: 0.45, dur: 2.8 },
+  { d: wave(256, 5), o: 0.6, dur: 4.2 },
+];
+
+// Villosités : arches douces au bas de l'intestin
+let villi = 'M120 540';
+for (let x = 120; x < 600; x += 40) villi += ` C${x + 4} 500 ${x + 36} 500 ${x + 40} 540`;
+
+// 9 souches : positions finales regroupées 4 / 4 / 1 (même motif que la section composition)
+const grid = (cx: number, cy: number) => [[-13, -13], [13, -13], [-13, 13], [13, 13]].map(([dx, dy]) => ({ x: cx + dx, y: cy + dy }));
+const strains = [...grid(232, 448), ...grid(488, 448), { x: 360, y: 452 }];
+
+// Bactéries « nues » (sans gélule) : position finale dans l'acide
+const naked = [292, 318, 344, 378, 404, 430].map((x, i) => ({ x, y: 262 + (i % 3) * 9 }));
+
+const lottie = LOTTIE_JSON_PATH;
+---
+<section class="section journey" aria-labelledby="journey-title" data-journey data-lottie={lottie || undefined}>
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Le voyage d'une gélule</p>
+      <h2 id="journey-title">Ce qui se passe après la gorgée d'eau.</h2>
+    </div>
+
+    <div class="journey__layout">
+      <div class="journey__stage">
+        <div class="journey__lottie" data-journey-lottie aria-hidden="true"></div>
+        <svg class="journey__svg" viewBox="0 0 720 560" role="img" aria-label={journey.ariaLabel} data-journey-svg>
+          <defs>
+            <clipPath id="stomach-clip">
+              <path d="M222 160C214 98 300 70 372 80c92 12 150 52 140 124-10 72-82 104-162 100-80-4-122-70-128-144Z" />
+            </clipPath>
+            <radialGradient id="strain-glow">
+              <stop offset="0" stop-color="var(--accent-soft)" stop-opacity="1" />
+              <stop offset="1" stop-color="var(--accent-soft)" stop-opacity="0" />
+            </radialGradient>
+            <filter id="cap-shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#0A2540" flood-opacity=".12" />
+            </filter>
+          </defs>
+
+          <!-- Organes -->
+          <g class="j-organs">
+            <path class="j-organ" d="M222 160C214 98 300 70 372 80c92 12 150 52 140 124-10 72-82 104-162 100-80-4-122-70-128-144Z" />
+            <g clip-path="url(#stomach-clip)">
+              {waves.map((w) => <path class="j-wave" d={w.d} style={`--o:${w.o}`} data-dur={w.dur} />)}
+            </g>
+            <rect class="j-organ" x="110" y="385" width="500" height="160" rx="48" />
+            <path class="j-villi" d={villi} />
+          </g>
+
+          <!-- Tracé du trajet -->
+          <line class="j-guide" x1="360" y1="24" x2="360" y2="385" />
+
+          <!-- Ondes sur le bouclier (plan 3) -->
+          <g class="j-ripples">
+            <ellipse class="j-ripple" cx="360" cy="200" rx="44" ry="66" />
+            <ellipse class="j-ripple" cx="360" cy="200" rx="44" ry="66" />
+          </g>
+
+          <!-- Bactéries sans protection (plan 2) -->
+          <g class="j-naked">
+            {naked.map((n) => <circle class="j-naked-dot" cx={n.x} cy={n.y} r="6" />)}
+          </g>
+
+          <!-- 9 souches (plan 4) -->
+          <g class="j-strains">
+            {strains.map((s) => (
+              <g class="j-strain" data-x={s.x} data-y={s.y}>
+                <circle class="j-halo" cx={s.x} cy={s.y} r="16" fill="url(#strain-glow)" />
+                <circle class="j-core" cx={s.x} cy={s.y} r="7" />
+              </g>
+            ))}
+          </g>
+
+          <!-- Gélule -->
+          <g class="j-capsule" filter="url(#cap-shadow)">
+            <ellipse class="j-shield" cx={CAP.x} cy={CAP.y} rx="40" ry="62" />
+            <g class="j-cap-top">
+              <path class="j-shell" d={`M${CAP.x - 18} ${CAP.y}v-${CAP.h / 2 - 18}a18 18 0 0 1 36 0v${CAP.h / 2 - 18}Z`} />
+              <path class="j-shine" d={`M${CAP.x - 9} ${CAP.y - 26}a9 9 0 0 1 6-8`} />
+            </g>
+            <g class="j-cap-bottom">
+              <path class="j-fill" d={`M${CAP.x - 18} ${CAP.y}v${CAP.h / 2 - 18}a18 18 0 0 0 36 0v-${CAP.h / 2 - 18}Z`} />
+            </g>
+          </g>
+        </svg>
+        <button class="journey__control" type="button" data-journey-control hidden>Pause</button>
+      </div>
+
+      <div class="journey__panel">
+        <ol class="journey__captions" data-journey-captions>
+          {journey.captions.map((c, i) => (
+            <li><span class="journey__step num" aria-hidden="true">0{i + 1}</span><p>{c}</p></li>
+          ))}
+        </ol>
+        <div class="journey__end" data-journey-end>
+          <ul class="journey__badges" aria-label={`Repères ${product.name}`}>
+            {journey.badges.map((b) => <li data-journey-end-item>{b}</li>)}
+          </ul>
+          <div data-journey-end-item>
+            <Cta label={`Découvrir ${product.name}`} id="journey" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .journey__layout { display: grid; grid-template-columns: 1.25fr .75fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
+  .journey__stage {
+    position: relative; background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); padding: clamp(8px, 2vw, 24px); aspect-ratio: 720 / 560;
+  }
+  .journey__svg, .journey__lottie { width: 100%; height: 100%; display: block; }
+  .journey__lottie { position: absolute; inset: clamp(8px, 2vw, 24px); width: auto; height: auto; }
+  .journey__lottie:empty { display: none; }
+
+  /* ── Habillage SVG (tokens → mode sombre automatique) ── */
+  .j-organ { fill: var(--tint); stroke: var(--ink); stroke-opacity: .35; stroke-width: 2; }
+  .j-villi { fill: none; stroke: var(--ink); stroke-opacity: .3; stroke-width: 2; stroke-linecap: round; }
+  .j-wave { fill: #E8A87C; opacity: var(--o); }
+  .j-guide { stroke: var(--ink); stroke-opacity: .25; stroke-width: 2; stroke-dasharray: 2 8; stroke-linecap: round; }
+  .j-ripple { fill: none; stroke: var(--ink); stroke-opacity: .25; stroke-width: 1.5; opacity: 0; }
+  .j-naked-dot { fill: #8A9BB0; }
+  .j-core { fill: var(--accent); }
+  .j-shield { fill: var(--ink); fill-opacity: .07; stroke: var(--ink); stroke-opacity: .25; stroke-width: 1.5; opacity: 0; }
+  .j-shell { fill: var(--surface); stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+  .j-fill { fill: var(--accent); stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+  .j-shine { fill: none; stroke: var(--accent-soft); stroke-width: 4; stroke-linecap: round; }
+
+  /* ── État final statique (sans JS / mouvement réduit) ── */
+  .journey:not(.is-animated) .j-naked-dot { opacity: .15; }
+  .journey:not(.is-animated) :is(.j-cap-top, .j-cap-bottom) { transform-box: fill-box; transform-origin: 50% 50%; opacity: .35; }
+  .journey:not(.is-animated) .j-cap-top { transform: translate(-62px, -6px) rotate(-55deg); }
+  .journey:not(.is-animated) .j-cap-bottom { transform: translate(62px, -6px) rotate(55deg); }
+
+  /* ── Panneau texte ── */
+  .journey__captions { list-style: none; padding: 0; display: grid; gap: 18px; }
+  .journey__captions li { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: baseline; }
+  .journey__captions p { font-size: var(--fs-lg); font-weight: 600; line-height: 1.35; letter-spacing: -.01em; }
+  .journey__step { font-size: var(--fs-sm); font-weight: 700; color: var(--accent); }
+  /* En mode animé : sous-titres empilés, un seul visible à la fois (tous restent lisibles par les lecteurs d'écran) */
+  .journey.is-animated .journey__captions { gap: 0; }
+  .journey.is-animated .journey__captions li { grid-area: 1 / 1; opacity: 0; translate: 0 8px; transition: opacity 450ms var(--ease-out), translate 450ms var(--ease-out); }
+  .journey.is-animated .journey__captions li.is-active { opacity: 1; translate: 0 0; }
+  .journey.is-animated .journey__captions { display: grid; }
+
+  .journey__end { margin-top: clamp(28px, 4vw, 44px); display: grid; gap: 24px; }
+  .journey__badges { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .journey__badges li {
+    font-size: var(--fs-sm); font-weight: 600; padding: 8px 14px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--line);
+  }
+  .journey__badges li::before { content: '✓'; color: var(--accent); margin-right: 8px; font-weight: 700; }
+
+  .journey__control {
+    position: absolute; top: 12px; right: 12px; min-height: 36px; min-width: 44px; padding: 0 14px;
+    border-radius: 999px; border: 1px solid var(--line); background: var(--glass); color: var(--ink);
+    font: 600 var(--fs-xs)/1 var(--font); cursor: pointer; backdrop-filter: blur(8px);
+    transition: background-color var(--dur-fast);
+  }
+  .journey__control:hover { background: var(--surface); }
+
+  @media (max-width: 900px) { .journey__layout { grid-template-columns: 1fr; } }
+</style>

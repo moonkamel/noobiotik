@@ -86,6 +86,29 @@ export const trust = {
   customers: '39 000', // source : Noobiotik ; à vérifier
 };
 
+/**
+ * Animation « Voyage de la gélule » (section Journey).
+ * - captions : textes validés, affichés en HTML sous l'animation (un par plan).
+ * - timings : début de chaque plan, en secondes. Utilisés par la timeline GSAP ET
+ *   par la version Lottie éventuelle (synchronisation des sous-titres).
+ * - LOTTIE_JSON_PATH : chemin d'un JSON Lottie (ex. '/animations/probio9-journey.json',
+ *   à déposer dans public/animations/). Vide = version SVG + GSAP (par défaut).
+ */
+export const LOTTIE_JSON_PATH = '';
+
+export const journey = {
+  captions: [
+    "Avalé, un probiotique doit d'abord traverser l'estomac.",
+    'Son acidité est un milieu difficile pour des bactéries vivantes.',
+    'Grâce à sa gélule gastro-résistante, Probio9 protège les souches.',
+    "Elle s'ouvre plus loin, dans l'intestin, et y libère ses 9 souches.",
+  ],
+  timings: { trajet: 0, obstacle: 2.5, heros: 5.5, liberation: 9, preuve: 12.5, fin: 13.5 },
+  badges: ['Fabriqué en France', "32 milliards d'UFC", '39 000+ clients'],
+  ariaLabel:
+    "Animation montrant la gélule gastro-résistante de Probio9 traverser l'acidité de l'estomac puis s'ouvrir dans l'intestin pour y libérer ses 9 souches.",
+};
+
 export const legal = {
   editorName: '[Nom Prénom ou raison sociale]', // À COMPLÉTER
   editorStatus: '[Micro-entreprise — SIRET]', // À COMPLÉTER
