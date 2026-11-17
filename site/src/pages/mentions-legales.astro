@@ -1,0 +1,18 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { legal, product } from '../config';
+---
+<Legal title="Mentions légales" path="/mentions-legales" updated="17/11/2026">
+  <h2>Éditeur du site</h2>
+  <p><mark>{legal.editorName}</mark><br /><mark>{legal.editorStatus}</mark><br /><mark>{legal.editorAddress}</mark><br />Contact : <mark>{legal.editorEmail}</mark></p>
+  <p>Directeur de la publication : <mark>{legal.editorName}</mark></p>
+
+  <h2>Hébergement</h2>
+  <p>{legal.host}</p>
+
+  <h2>Nature du site</h2>
+  <p>Site éditorial d'information sur le microbiote et les probiotiques, financé par l'affiliation (voir la <a href="/affiliation">politique d'affiliation</a>). Le site ne vend aucun produit. Les informations publiées ne constituent pas un avis médical et ne remplacent pas une consultation.</p>
+
+  <h2>Propriété intellectuelle</h2>
+  <p>Les textes et visuels du site sont la propriété de l'éditeur, sauf mention contraire. {product.brand} et {product.name} sont des marques de leur propriétaire, citées à des fins d'information.</p>
+</Legal>

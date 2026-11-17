@@ -1,0 +1,107 @@
+---
+import Cta from './Cta.astro';
+import { product, leadMagnet, EMAIL_FORM_ACTION, EMAIL_FIELD_NAME } from '../config';
+const formReady = Boolean(EMAIL_FORM_ACTION);
+---
+<section class="section action" aria-labelledby="action-title" data-action>
+  <div class="container">
+    <div class="action__card">
+      <div class="action__main">
+        <p class="eyebrow">À vous de juger</p>
+        <h2 id="action-title">Lisez l'étiquette complète. Ensuite, décidez.</h2>
+        <p class="lead">{product.strainsCount} souches, {product.cfuBillions} milliards d'UFC garantis, une gélule gastro-résistante et une formule sans excipient controversé. Tout est détaillé sur la fiche officielle.</p>
+        <div class="action__cta">
+          <Cta label={`Découvrir la formule ${product.name}`} id="final" note="long" />
+        </div>
+      </div>
+
+      <div class="action__guide" id="guide">
+        <div class="guide__cover" aria-hidden="true">
+          <span class="guide__tag">Guide gratuit · PDF</span>
+          <span class="guide__title">Les 3 erreurs</span>
+          <span class="guide__sub">qui déséquilibrent votre microbiote</span>
+        </div>
+        <h3>{leadMagnet.title}</h3>
+        <p class="muted">{leadMagnet.pitch}</p>
+        <form class="guide__form" method="post" action={formReady ? EMAIL_FORM_ACTION : undefined} data-email-form data-ready={formReady ? 'true' : 'false'} novalidate>
+          <div class="field">
+            <label for="email">Votre adresse email</label>
+            <div class="field__row">
+              <input id="email" name={EMAIL_FIELD_NAME} type="email" autocomplete="email" inputmode="email" required placeholder="vous@exemple.fr" aria-describedby="email-help email-status" />
+              <button class="btn" type="submit">Recevoir le guide</button>
+            </div>
+          </div>
+          <!-- Pot de miel anti-spam : invisible pour les humains -->
+          <div class="sr-only" aria-hidden="true"><label for="website">Ne pas remplir</label><input id="website" name="website" tabindex="-1" autocomplete="off" /></div>
+          <label class="consent">
+            <input type="checkbox" name="OPT_IN" value="1" required />
+            <span>J'accepte de recevoir le guide et des emails éducatifs (avec liens affiliés signalés). Désinscription en un clic. <a href="/confidentialite">Confidentialité</a></span>
+          </label>
+          <p id="email-help" class="sr-only">Vous recevrez un email de confirmation avant tout envoi.</p>
+          <p id="email-status" class="form-status" role="status" aria-live="polite">{formReady ? '' : ''}</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Validation douce + état « bientôt disponible » tant qu'aucun outil emailing n'est branché.
+  const form = document.querySelector<HTMLFormElement>('[data-email-form]');
+  if (form) {
+    const status = form.querySelector<HTMLElement>('#email-status')!;
+    const input = form.querySelector<HTMLInputElement>('input[type=email]')!;
+    const consent = form.querySelector<HTMLInputElement>('input[name=OPT_IN]')!;
+    form.addEventListener('submit', (e) => {
+      status.dataset.state = 'error';
+      if (!input.validity.valid) { e.preventDefault(); status.textContent = 'Cette adresse email ne semble pas valide.'; input.focus(); return; }
+      if (!consent.checked) { e.preventDefault(); status.textContent = 'Merci de cocher la case de consentement.'; consent.focus(); return; }
+      if (form.dataset.ready !== 'true') {
+        e.preventDefault();
+        status.dataset.state = 'info';
+        status.textContent = 'Le guide arrive très bientôt : l\'envoi n\'est pas encore activé.';
+        return;
+      }
+      status.dataset.state = 'ok';
+      status.textContent = 'Envoi en cours…';
+    });
+  }
+</script>
+
+<style>
+  .action__card {
+    display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(32px, 5vw, 64px);
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    padding: clamp(24px, 5vw, 64px); box-shadow: var(--shadow);
+  }
+  .action__main .lead { margin-top: 20px; }
+  .action__cta { margin-top: 32px; }
+  .action__guide { display: flex; flex-direction: column; gap: 12px; border-left: 1px solid var(--line); padding-left: clamp(24px, 4vw, 56px); }
+  .guide__cover {
+    aspect-ratio: 16 / 9; border-radius: 14px; padding: 20px; margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--ink), color-mix(in srgb, var(--ink) 70%, var(--accent)));
+    color: var(--bg); display: flex; flex-direction: column; justify-content: flex-end; gap: 2px;
+  }
+  .guide__tag { font-size: var(--fs-xs); letter-spacing: .1em; text-transform: uppercase; opacity: .7; margin-bottom: auto; }
+  .guide__title { font-size: var(--fs-xl); font-weight: 750; letter-spacing: -.03em; line-height: 1; }
+  .guide__sub { font-size: var(--fs-sm); opacity: .85; }
+  .guide__form { display: grid; gap: 14px; margin-top: 6px; }
+  .field label { display: block; font-size: var(--fs-sm); font-weight: 600; margin-bottom: 8px; }
+  .field__row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .field input {
+    flex: 1 1 200px; min-height: 54px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--bg);
+    color: var(--ink); padding: 0 20px; font: inherit; transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+  }
+  .field input:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .field .btn { flex: 0 0 auto; }
+  .consent { display: flex; gap: 10px; font-size: var(--fs-xs); color: var(--ink-2); align-items: flex-start; }
+  .consent input { width: 20px; height: 20px; margin-top: 1px; accent-color: var(--accent); flex: none; }
+  .form-status { font-size: var(--fs-sm); min-height: 1.4em; }
+  .form-status[data-state='error'] { color: #B42318; }
+  .form-status[data-state='ok'], .form-status[data-state='info'] { color: var(--accent); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .form-status[data-state='error'] { color: #FDA29B; } }
+  @media (max-width: 900px) {
+    .action__card { grid-template-columns: 1fr; }
+    .action__guide { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 32px; }
+  }
+</style>

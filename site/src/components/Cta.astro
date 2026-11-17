@@ -1,0 +1,23 @@
+---
+/**
+ * Bouton d'action + mention d'affiliation, toujours ensemble (conformité).
+ * `id` sert au suivi des clics (data-cta) si un outil d'analytics est ajouté plus tard.
+ */
+import { ctaHref, product } from '../config';
+interface Props { label: string; id: string; note?: 'short' | 'long' }
+const { label, id, note = 'short' } = Astro.props;
+---
+<div class="cta">
+  <a class="btn" href={ctaHref} rel="sponsored nofollow noopener" data-cta={id}>
+    {label}<span class="btn__arrow" aria-hidden="true">→</span>
+    <span class="sr-only">(lien affilié vers la boutique officielle {product.brand})</span>
+  </a>
+  <p class="affiliate-note">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><path d="M8 7.2v4M8 4.8v.01"/></svg>
+    {note === 'short' ? (
+      <span>Lien affilié : je touche une commission, sans surcoût pour vous. <a href="/affiliation">En savoir plus</a></span>
+    ) : (
+      <span>En cliquant, vous serez redirigé vers la boutique officielle {product.brand}. Je perçois une commission d'affiliation, sans surcoût pour vous. <a href="/affiliation">Politique d'affiliation</a></span>
+    )}
+  </p>
+</div>

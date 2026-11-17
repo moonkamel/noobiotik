@@ -1,0 +1,134 @@
+---
+import Cta from './Cta.astro';
+import { product } from '../config';
+
+const cards = [
+  {
+    big: `${product.cfuBillions} Md`,
+    title: "d'UFC garantis par dose",
+    text: 'Quantité garantie, et non mesurée le jour de la fabrication.',
+    icon: 'cfu',
+  },
+  {
+    big: 'Gastro-résistante',
+    title: 'Embo Caps® AP',
+    text: "Une gélule conçue pour traverser l'acidité de l'estomac avant de s'ouvrir.",
+    icon: 'capsule',
+  },
+  {
+    big: '0',
+    title: 'excipient controversé',
+    text: `Sans ${product.free.join(', ')}. ${product.labels.map((l, i) => (i ? l.toLowerCase() : l)).join(', ')}.`,
+    icon: 'clean',
+  },
+  {
+    big: 'Ambiante',
+    title: 'conservation',
+    text: 'Pas besoin de frigo : ça se range avec le reste de votre routine.',
+    icon: 'temp',
+  },
+];
+
+// Orbite → répartition par genre (animée au scroll par scripts/story.ts)
+let k = 0;
+const groups = product.genera.map((g) => ({
+  ...g,
+  dots: Array.from({ length: g.count }, () => ({ angle: (k++ / product.strainsCount) * 360 - 90 })),
+}));
+const hasStrainNames = product.strains.length > 0;
+---
+<section class="section solution" aria-labelledby="solution-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">La solution que j'ai retenue</p>
+      <h2 id="solution-title">{product.name} : {product.strainsCount} souches, une formule lisible.</h2>
+      <p class="lead" data-claims-ok>Je ne vous dirai pas ce qu'il va faire à votre ventre : personne n'a le droit de le promettre. Je vous montre pourquoi sa composition coche mes critères.</p>
+    </div>
+
+    <ul class="solution__cards" data-stagger>
+      {cards.map((c) => (
+        <li class="card card--hover sol-card" data-stagger-item>
+          <svg class="sol-card__icon draw" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            {c.icon === 'cfu' && (<>
+              <circle cx="20" cy="20" r="14" pathLength="1" />
+              <circle cx="15" cy="16" r="2.5" pathLength="1" /><circle cx="25" cy="17" r="2" pathLength="1" />
+              <circle cx="18" cy="25" r="2" pathLength="1" /><circle cx="26" cy="25" r="2.5" pathLength="1" />
+            </>)}
+            {c.icon === 'capsule' && (<>
+              <rect x="6" y="13" width="28" height="14" rx="7" pathLength="1" /><line x1="20" y1="13" x2="20" y2="27" pathLength="1" />
+            </>)}
+            {c.icon === 'clean' && (<>
+              <circle cx="20" cy="20" r="14" pathLength="1" /><polyline points="13,20.5 18,25.5 27.5,15" pathLength="1" />
+            </>)}
+            {c.icon === 'temp' && (<>
+              <path d="M17 24.5V9a3 3 0 0 1 6 0v15.5a6 6 0 1 1-6 0z" pathLength="1" /><line x1="20" y1="16" x2="20" y2="28" pathLength="1" />
+            </>)}
+          </svg>
+          <p class="sol-card__big">{c.big}</p>
+          <h3>{c.title}</h3>
+          <p class="muted">{c.text}</p>
+        </li>
+      ))}
+    </ul>
+
+    <div class="strains" data-strains>
+      <div class="strains__copy">
+        <h3 class="strains__title">Les {product.strainsCount} souches, par famille</h3>
+        <p class="muted">
+          Quatre bifidobactéries, quatre lactobacilles et un lactocoque : trois familles complémentaires parmi les plus étudiées.
+          {hasStrainNames ? ' Le détail souche par souche :' : " Le nom complet de chaque souche (genre, espèce, code) figure sur la fiche officielle : c'est le premier réflexe à avoir."}
+        </p>
+      </div>
+      <div class="strains__viz" role="list" aria-label={`Répartition des ${product.strainsCount} souches`}>
+        {groups.map((g) => (
+          <div class="strains__group" role="listitem">
+            <div class="strains__dots" aria-hidden="true">
+              {g.dots.map((d) => <span class="strain-dot" data-angle={d.angle} />)}
+            </div>
+            <p class="strains__label"><span class="num">{g.count}</span> {g.genus}</p>
+            {g.note && <p class="strains__note">{g.note}</p>}
+          </div>
+        ))}
+      </div>
+      {hasStrainNames && (
+        <ul class="strains__names">
+          {product.strains.map((s) => <li><em>{s.name}</em> {s.code}{s.cfuBillions && <span class="muted"> · {s.cfuBillions} Md UFC</span>}</li>)}
+        </ul>
+      )}
+    </div>
+
+    <div class="solution__cta">
+      <Cta label="Voir la composition complète" id="solution" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .solution__cards { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .sol-card { display: flex; flex-direction: column; gap: 6px; }
+  .sol-card__icon { color: var(--accent); margin-bottom: 18px; }
+  .sol-card__big { font-size: var(--fs-xl); font-weight: 720; letter-spacing: -.03em; line-height: 1.1; overflow-wrap: anywhere; }
+  .sol-card h3 { font-size: var(--fs-base); }
+  .sol-card .muted { font-size: var(--fs-sm); }
+
+  .strains {
+    margin-top: clamp(48px, 7vw, 96px); display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(32px, 6vw, 80px);
+    align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    padding: clamp(24px, 5vw, 56px);
+  }
+  .strains__title { font-size: var(--fs-xl); margin-bottom: 14px; }
+  .strains__viz { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; min-height: 200px; }
+  .strains__group { text-align: center; }
+  .strains__dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 76px; margin: 0 auto 18px; }
+  .strain-dot { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 6px var(--accent-soft); will-change: transform; }
+  .strains__label { font-weight: 650; font-size: var(--fs-sm); }
+  .strains__label .num { font-size: var(--fs-xl); display: block; line-height: 1.1; }
+  .strains__note { font-size: var(--fs-xs); color: var(--ink-2); margin-top: 4px; }
+  .strains__names { grid-column: 1 / -1; list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px 24px; border-top: 1px solid var(--line); padding-top: 24px; }
+  .solution__cta { margin-top: clamp(40px, 6vw, 64px); display: flex; justify-content: center; text-align: center; }
+  .solution__cta :global(.affiliate-note) { justify-content: center; }
+
+  @media (max-width: 1000px) { .solution__cards { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 860px) { .strains { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .solution__cards { grid-template-columns: 1fr; } }
+</style>

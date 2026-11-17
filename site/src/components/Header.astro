@@ -1,0 +1,33 @@
+---
+import { ctaHref } from '../config';
+import Logo from './Logo.astro';
+---
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <a href="/" class="site-header__brand" aria-label="ProbioDécodé, accueil"><Logo /></a>
+    <nav aria-label="Navigation principale" class="site-header__nav">
+      <a class="link site-header__guide" href="/#guide">Le guide gratuit</a>
+      <a class="btn btn--sm" href={ctaHref} rel="sponsored nofollow noopener" data-cta="header">
+        Voir Probio9 <span class="sr-only">(lien affilié, boutique officielle Noobiotik)</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 50;
+    transition: background-color var(--dur) var(--ease-out), box-shadow var(--dur), backdrop-filter var(--dur);
+  }
+  /* Verre dépoli après défilement (classe posée par scripts/micro.ts) */
+  .site-header.is-scrolled {
+    background: var(--glass);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 72px; }
+  .site-header__brand { text-decoration: none; display: inline-flex; min-height: 44px; align-items: center; }
+  .site-header__nav { display: flex; align-items: center; gap: clamp(12px, 2.5vw, 28px); }
+  @media (max-width: 560px) { .site-header__guide { display: none; } }
+</style>

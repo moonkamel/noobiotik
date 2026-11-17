@@ -1,0 +1,35 @@
+---
+import Logo from './Logo.astro';
+import { product } from '../config';
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <Logo />
+      <p class="muted">L'éducation au microbiote, sans bullshit. Site éditorial indépendant, affilié à {product.brand} (lien de commission, sans surcoût pour vous).</p>
+    </div>
+    <nav aria-label="Liens légaux">
+      <ul class="footer__links">
+        <li><a class="link" href="/affiliation">Politique d'affiliation</a></li>
+        <li><a class="link" href="/mentions-legales">Mentions légales</a></li>
+        <li><a class="link" href="/confidentialite">Confidentialité</a></li>
+      </ul>
+    </nav>
+    <p class="footer__legal muted" data-claims-ok>
+      Les compléments alimentaires ne se substituent pas à une alimentation variée et équilibrée ni à un mode de vie sain.
+      Ne pas dépasser la dose journalière recommandée. Tenir hors de portée des enfants. Demandez l'avis d'un professionnel
+      de santé en cas de grossesse, d'allaitement ou de traitement, et si une gêne persiste. Ce site ne fournit pas d'avis médical.
+    </p>
+    <p class="footer__legal muted">© {year} Probio Décodé · {product.brand} et {product.name} sont des marques de leur propriétaire.</p>
+  </div>
+</footer>
+
+<style>
+  .footer { border-top: 1px solid var(--line); padding-block: 56px 40px; font-size: var(--fs-sm); }
+  .footer__inner { display: grid; gap: 28px; grid-template-columns: 1.4fr 1fr; }
+  .footer__brand p { margin-top: 14px; max-width: 46ch; }
+  .footer__links { list-style: none; padding: 0; display: grid; gap: 2px; justify-items: start; }
+  .footer__legal { grid-column: 1 / -1; font-size: var(--fs-xs); max-width: 110ch; }
+  @media (max-width: 720px) { .footer__inner { grid-template-columns: 1fr; } }
+</style>

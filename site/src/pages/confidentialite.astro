@@ -1,0 +1,18 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { legal } from '../config';
+---
+<Legal title="Politique de confidentialité" path="/confidentialite" updated="17/11/2026">
+  <h2>Ce que le site collecte</h2>
+  <ul>
+    <li><strong>Votre email</strong>, uniquement si vous demandez le guide gratuit. Finalité : vous envoyer le guide puis des emails éducatifs. Base légale : votre consentement (case à cocher, puis confirmation par email).</li>
+    <li><strong>Aucun cookie publicitaire ni traceur d'analyse</strong> n'est déposé par ce site. C'est pour ça qu'il n'y a pas de bandeau cookies.</li>
+    <li><strong>Liens affiliés :</strong> quand vous cliquez sur un lien vers la boutique, le réseau Awin et la boutique peuvent déposer leurs propres cookies de suivi sur leur site, afin d'attribuer la vente. Ils relèvent de leurs politiques de confidentialité.</li>
+  </ul>
+
+  <h2>Durée et destinataires</h2>
+  <p>Votre email est conservé jusqu'à votre désinscription (lien présent dans chaque email), puis supprimé sous 3 ans d'inactivité au plus tard. Il est hébergé par le prestataire d'emailing <mark>[nom du prestataire, ex. Brevo (France)]</mark> et n'est jamais vendu ni cédé.</p>
+
+  <h2>Vos droits</h2>
+  <p>Vous pouvez accéder à vos données, les rectifier, les supprimer ou retirer votre consentement à tout moment en écrivant à <mark>{legal.editorEmail}</mark>. Vous pouvez aussi adresser une réclamation à la CNIL (cnil.fr).</p>
+</Legal>

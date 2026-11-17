@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Problem from '../components/Problem.astro';
+import Education from '../components/Education.astro';
+import Solution from '../components/Solution.astro';
+import Proof from '../components/Proof.astro';
+import Faq from '../components/Faq.astro';
+import Action from '../components/Action.astro';
+import StickyCta from '../components/StickyCta.astro';
+import { faqs } from '../data/faq';
+import { site, product } from '../config';
+
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: site.url, inLanguage: 'fr-FR' },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+<Base title={`${product.name} décodé : ${product.strainsCount} souches, ${product.cfuBillions} Md UFC, sans promesse | ${site.name}`} jsonLd={jsonLd}>
+  <Hero />
+  <Problem />
+  <Education />
+  <Solution />
+  <Proof />
+  <Faq />
+  <Action />
+  <StickyCta />
+</Base>
+
+<script>
+  import '../scripts/micro';
+</script>

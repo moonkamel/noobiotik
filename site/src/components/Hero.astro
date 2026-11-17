@@ -1,0 +1,94 @@
+---
+import Cta from './Cta.astro';
+import { product, trust } from '../config';
+// 9 points = 9 souches, répartis sur l'orbite (3 tailles = 3 genres : 4 / 4 / 1)
+const dots = Array.from({ length: 9 }, (_, i) => {
+  const a = (i / 9) * Math.PI * 2 - Math.PI / 2;
+  return { cx: 200 + Math.cos(a) * 168, cy: 200 + Math.sin(a) * 168, r: i < 4 ? 8 : i < 8 ? 6 : 10 };
+});
+---
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow intro" style="--i:0">Probiotique décodé · {product.name}</p>
+      <h1 id="hero-title" class="hero__title intro" style="--i:1">Un probiotique se choisit sur l'étiquette.</h1>
+      <p class="lead intro" style="--i:2">
+        {product.strainsCount} souches, {product.cfuBillions} milliards d'UFC garantis, gélule gastro-résistante.
+        J'ai lu la composition de {product.name} ligne par ligne&nbsp;: la voici, sans promesse en l'air.
+      </p>
+      <div class="hero__actions intro" style="--i:3">
+        <Cta label={`Découvrir la formule ${product.name}`} id="hero" />
+        <a class="link hero__secondary" href="#guide">Télécharger le guide gratuit</a>
+      </div>
+      <ul class="hero__proof intro" style="--i:4" aria-label="Repères">
+        <li>Fabriqué en Bretagne</li>
+        <li>Vegan</li>
+        <li><span class="num">{String(trust.trustpilotRating).replace('.', ',')}</span>/5 sur Trustpilot</li>
+        <li>{trust.customers}+ clients</li>
+      </ul>
+    </div>
+
+    <figure class="hero__visual intro" style="--i:2" aria-hidden="true">
+      <svg viewBox="0 0 400 400" class="capsule-svg">
+        <defs>
+          <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stop-color="var(--accent-soft)" stop-opacity=".9" />
+            <stop offset="1" stop-color="var(--accent-soft)" stop-opacity="0" />
+          </radialGradient>
+          <linearGradient id="shell" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="var(--surface)" />
+            <stop offset="1" stop-color="var(--accent-soft)" />
+          </linearGradient>
+        </defs>
+        <circle cx="200" cy="200" r="150" fill="url(#halo)" />
+        <circle cx="200" cy="200" r="168" fill="none" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="2 7" />
+        <g class="orbit">
+          {dots.map((d) => <circle cx={d.cx} cy={d.cy} r={d.r} fill="var(--accent)" />)}
+        </g>
+        <g class="capsule" transform="rotate(-35 200 200)">
+          <rect x="150" y="95" width="100" height="210" rx="50" fill="url(#shell)" stroke="var(--accent)" stroke-width="2.5" />
+          <path d="M150 200h100v55a50 50 0 0 1-100 0z" fill="var(--accent)" />
+          <path d="M168 130a32 32 0 0 1 18-18" stroke="var(--surface)" stroke-width="5" stroke-linecap="round" fill="none" opacity=".9" />
+        </g>
+      </svg>
+      <figcaption class="sr-only">Gélule entourée de 9 points représentant les 9 souches.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero { padding-block: clamp(32px, 6vw, 88px) clamp(64px, 9vw, 120px); }
+  .hero__grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(32px, 6vw, 80px); align-items: center; }
+  .hero__title { font-size: var(--fs-hero); max-width: 13ch; margin-bottom: 24px; }
+  .hero__actions { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px 28px; margin-top: 36px; }
+  .hero__secondary { margin-top: 5px; }
+  .hero__proof {
+    list-style: none; padding: 0; margin-top: 36px; display: flex; flex-wrap: wrap; gap: 10px 22px;
+    font-size: var(--fs-sm); color: var(--ink-2);
+  }
+  .hero__proof li::before {
+    content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); margin-right: 9px; vertical-align: middle; translate: 0 -1px;
+  }
+  .hero__visual { margin: 0; justify-self: center; width: min(100%, 440px); }
+  .capsule-svg { width: 100%; height: auto; overflow: visible; }
+  .orbit { transform-origin: 200px 200px; animation: orbit 60s linear infinite; }
+  .capsule { transform-box: view-box; }
+  @keyframes orbit { to { transform: rotate(360deg); } }
+
+  /* Entrée au chargement : CSS pur (pas d'attente du JS → LCP immédiat) */
+  .js-motion .intro { animation: intro 800ms var(--ease-out) both; animation-delay: calc(var(--i) * 80ms); }
+  .js-motion .hero__title.intro { animation-name: intro-title; }
+  @keyframes intro { from { opacity: 0; translate: 0 14px; } }
+  /* Le H1 (élément LCP) reste peint dès la 1re frame : seule sa position bouge */
+  @keyframes intro-title { from { translate: 0 10px; } }
+
+  @media (max-width: 860px) {
+    .hero__grid { grid-template-columns: 1fr; }
+    /* Mobile : visuel réduit pour garder H1 + CTA au-dessus de la ligne de flottaison */
+    .hero { padding-top: 8px; }
+    .hero__grid { gap: 8px; }
+    .hero__visual { order: -1; width: 112px; justify-self: start; margin-left: -8px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .orbit { animation: none; } }
+</style>

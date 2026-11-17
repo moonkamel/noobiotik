@@ -1,0 +1,56 @@
+---
+/**
+ * Bloc ÉDUCATIF : volontairement séparé du produit (aucun lien affilié, aucune
+ * mention de Probio9). Faits généraux et sourcés uniquement (cf. docs/conformite.md).
+ */
+const facts = [
+  {
+    stat: '≈ 1 : 1',
+    title: 'Autant de bactéries que de cellules',
+    text: "On a longtemps répété « 10 bactéries pour 1 cellule humaine ». L'estimation actuelle est plus proche de 1 pour 1, soit environ 200 g de bactéries, pas 2 kg.",
+    source: 'Sender, Fuchs & Milo, PLOS Biology, 2016',
+    href: 'https://doi.org/10.1371/journal.pbio.1002533',
+  },
+  {
+    stat: '20 g',
+    title: 'de fibres par jour en moyenne',
+    text: "Les fibres nourrissent les bactéries de l'intestin. Les adultes français en consomment environ 20 g par jour, pour une recommandation de 30 g.",
+    source: 'Anses, étude INCA 3, 2017',
+    href: 'https://www.anses.fr/fr/content/inca-3-evolution-des-habitudes-et-modes-de-consommation-de-nouveaux-enjeux-en-matiere-de',
+  },
+  {
+    stat: 'Diversité',
+    title: 'plutôt que quantité',
+    text: "Ce que les chercheurs observent d'abord, c'est la variété des espèces présentes. Elle varie d'une personne à l'autre et évolue avec l'alimentation.",
+    source: 'Inserm, dossier « Microbiote intestinal »',
+    href: 'https://www.inserm.fr/dossier/microbiote-intestinal-flore-intestinale/',
+  },
+];
+---
+<section class="section education" aria-labelledby="edu-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Le microbiote en 30 secondes</p>
+      <h2 id="edu-title">Avant de parler gélules, trois faits.</h2>
+    </div>
+    <ul class="edu__grid" data-stagger>
+      {facts.map((f) => (
+        <li class="card edu__item" data-stagger-item>
+          <p class="edu__stat num">{f.stat}</p>
+          <h3>{f.title}</h3>
+          <p class="muted">{f.text}</p>
+          <p class="edu__source">Source : <a href={f.href} rel="noopener" target="_blank">{f.source}<span class="sr-only"> (nouvel onglet)</span></a></p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .edu__grid { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .edu__item { display: flex; flex-direction: column; gap: 10px; }
+  .edu__stat { font-size: var(--fs-2xl); font-weight: 720; letter-spacing: -.035em; line-height: 1; margin-bottom: 8px; }
+  .edu__source { margin-top: auto; padding-top: 14px; font-size: var(--fs-xs); color: var(--ink-2); }
+  .edu__source a { text-underline-offset: 3px; }
+  @media (max-width: 860px) { .edu__grid { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,44 @@
+---
+import { faqs } from '../data/faq';
+
+---
+<section class="section faq" aria-labelledby="faq-title">
+  <div class="container faq__grid">
+    <div>
+      <p class="eyebrow">Questions fréquentes</p>
+      <h2 id="faq-title">Les réponses, sans détour.</h2>
+    </div>
+    <div class="faq__list">
+      {faqs.map((f) => (
+        <details class="faq__item" data-claims-ok={f.q.includes('avis médical') ? '' : undefined}>
+          <summary><span>{f.q}</span><span class="faq__icon" aria-hidden="true"></span></summary>
+          <p class="muted">{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .faq__item { border-bottom: 1px solid var(--line); }
+  .faq__item:first-child { border-top: 1px solid var(--line); }
+  summary {
+    list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    min-height: 64px; padding-block: 16px; font-weight: 620; font-size: var(--fs-lg); letter-spacing: -.01em;
+  }
+  summary::-webkit-details-marker { display: none; }
+  .faq__icon { flex: none; width: 18px; height: 18px; position: relative; }
+  .faq__icon::before, .faq__icon::after {
+    content: ''; position: absolute; inset: 8px 0 auto; height: 2px; background: currentColor; border-radius: 2px;
+    transition: transform var(--dur) var(--ease-spring);
+  }
+  .faq__icon::after { transform: rotate(90deg); }
+  details[open] .faq__icon::after { transform: rotate(0deg); }
+  details p { padding-bottom: 22px; max-width: 62ch; }
+  @media (prefers-reduced-motion: no-preference) {
+    details[open] p { animation: faq-in 260ms var(--ease-out); }
+    @keyframes faq-in { from { opacity: 0; translate: 0 -6px; } }
+  }
+  @media (max-width: 860px) { .faq__grid { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,112 @@
+---
+import { product, trust, site, personalReview as review } from '../config';
+const rating = String(trust.trustpilotRating).replace('.', ',');
+const eur = (n: number) => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const days = product.capsulesPerBox / 2;
+const pricePerDay = eur(product.price.amount / days);
+const notSaying = [
+  'Que vos ballonnements vont disparaître',
+  'Que votre transit va se régler en 7 jours',
+  'Que votre immunité va être « boostée »',
+  "Que c'est le meilleur probiotique du marché",
+];
+---
+<section class="section section--tint proof" aria-labelledby="proof-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">La preuve</p>
+      <h2 id="proof-title">Ce qu'on peut vérifier. Et ce que je refuse de vous dire.</h2>
+    </div>
+
+    <div class="proof__grid" data-stagger>
+      <article class="card proof__rating" data-stagger-item>
+        <p class="proof__score"><span class="num" data-count={trust.trustpilotRating}>{rating}</span><span class="proof__out">/5</span></p>
+        <div class="stars" aria-hidden="true">
+          {Array.from({ length: 5 }, (_, i) => (
+            <span class="star" style={`--fill:${Math.min(1, Math.max(0, trust.trustpilotRating - i)) * 100}%`} />
+          ))}
+        </div>
+        <h3>sur Trustpilot</h3>
+        <p class="muted">
+          {trust.trustpilotReviews ? `${trust.trustpilotReviews.toLocaleString('fr-FR')} avis` : 'Note'} de la marque {product.brand}, consultée le {trust.checkedOn}.
+          Plus de {trust.customers} clients selon la marque.
+        </p>
+        <a class="link" href={trust.trustpilotUrl} rel="noopener" target="_blank">Lire les avis sur Trustpilot<span aria-hidden="true">&nbsp;↗</span><span class="sr-only"> (nouvel onglet)</span></a>
+      </article>
+
+      <article class="card proof__made" data-stagger-item>
+        <svg class="draw proof__icon" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 35s-11-9.5-11-18a11 11 0 0 1 22 0c0 8.5-11 18-11 18z" pathLength="1" /><circle cx="20" cy="17" r="4" pathLength="1" />
+        </svg>
+        <h3>Fabrication française, traçable</h3>
+        <dl class="facts">
+          <div><dt>Conçu à</dt><dd>{product.designedIn}</dd></div>
+          <div><dt>Fabriqué à</dt><dd>{product.madeIn}</dd></div>
+          <div><dt>Laboratoire</dt><dd>{product.certification}</dd></div>
+          <div><dt>Prix constaté</dt><dd>{eur(product.price.amount)} € {product.price.label} <span class="muted">(constaté le {product.price.checkedOn}, peut évoluer)</span></dd></div>
+        </dl>
+      </article>
+
+      <article class="card proof__review" data-stagger-item>
+        <svg class="draw proof__icon" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="7" y="9" width="26" height="24" rx="4" pathLength="1" /><line x1="7" y1="16" x2="33" y2="16" pathLength="1" /><line x1="14" y1="5" x2="14" y2="12" pathLength="1" /><line x1="26" y1="5" x2="26" y2="12" pathLength="1" />
+        </svg>
+        <h3>En pratique</h3>
+        <ul class="checklist">
+          <li><b>Dose :</b> {product.dose}, selon la notice.</li>
+          <li><b>Durée d'une boîte :</b> {product.capsulesPerBox} gélules, soit {days} jours.</li>
+          <li><b>Rangement :</b> {product.storage.toLowerCase()}, pas besoin de frigo.</li>
+          <li><b>Budget :</b> ≈ {pricePerDay} € par jour au prix public constaté.</li>
+        </ul>
+        {review && <blockquote class="proof__mine"><p>« {review} »</p><footer>{site.author}, utilisateur</footer></blockquote>}
+        <p class="proof__disclaimer">Informations pratiques issues de la fiche produit. Pas d'effet santé promis : chaque organisme est différent.</p>
+      </article>
+    </div>
+
+    <aside class="not-saying" aria-labelledby="not-saying-title" data-reveal data-claims-ok>
+      <h3 id="not-saying-title">Ce que je ne vous dirai jamais</h3>
+      <ul>
+        {notSaying.map((s) => <li><span aria-hidden="true">✕</span> {s}</li>)}
+      </ul>
+      <p class="muted">Ces promesses sont interdites pour un probiotique en Europe (règlement CE 1924/2006). Si un site vous les fait, fuyez-le, même s'il vend le même produit.</p>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .proof__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .proof__grid > .card { display: flex; flex-direction: column; gap: 12px; }
+  .proof__score { font-size: clamp(3.5rem, 2.5rem + 4vw, 5.5rem); font-weight: 750; letter-spacing: -.05em; line-height: .95; }
+  .proof__out { font-size: .4em; color: var(--ink-2); letter-spacing: -.02em; margin-left: 4px; }
+  .stars { display: flex; gap: 4px; }
+  .star {
+    width: 22px; height: 22px;
+    background: linear-gradient(90deg, var(--accent) var(--fill), var(--line) var(--fill));
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+  .proof__rating .link { margin-top: auto; }
+  .proof__icon { color: var(--accent); margin-bottom: 6px; }
+  .facts { display: grid; gap: 12px; font-size: var(--fs-sm); }
+  .facts div { display: grid; grid-template-columns: 7.5em 1fr; gap: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
+  .facts dt { color: var(--ink-2); }
+  .facts dd { font-weight: 560; }
+  .checklist { list-style: none; padding: 0; display: grid; gap: 10px; font-size: var(--fs-sm); }
+  .checklist b { font-weight: 650; }
+  .proof__mine { border-left: 3px solid var(--accent); padding-left: 14px; font-size: var(--fs-sm); }
+  .proof__mine footer { color: var(--ink-2); font-size: var(--fs-xs); margin-top: 6px; }
+  .proof__disclaimer { margin-top: auto; font-size: var(--fs-xs); color: var(--ink-2); padding-top: 8px; }
+
+  .not-saying {
+    margin-top: 16px; border-radius: var(--radius); padding: clamp(24px, 4vw, 40px);
+    background: var(--ink); color: var(--bg);
+    display: grid; grid-template-columns: 1fr 1.3fr; gap: 16px 48px; align-items: start;
+  }
+  .not-saying h3 { font-size: var(--fs-xl); }
+  .not-saying ul { list-style: none; padding: 0; display: grid; gap: 10px; grid-row: span 2; }
+  .not-saying li { text-decoration: line-through; text-decoration-thickness: 1.5px; text-decoration-color: color-mix(in srgb, var(--bg) 55%, transparent); }
+  .not-saying li span { text-decoration: none; display: inline-block; margin-right: 8px; opacity: .7; }
+  .not-saying .muted { color: color-mix(in srgb, var(--bg) 72%, var(--ink)); font-size: var(--fs-sm); }
+
+  @media (max-width: 1000px) { .proof__grid { grid-template-columns: 1fr 1fr; } .proof__review { grid-column: 1 / -1; } }
+  @media (max-width: 720px) { .proof__grid, .not-saying { grid-template-columns: 1fr; } .not-saying ul { grid-row: auto; } }
+</style>
